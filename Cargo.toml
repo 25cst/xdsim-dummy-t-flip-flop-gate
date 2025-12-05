@@ -1,0 +1,11 @@
+[package]
+name = "xdsim-dummy-t-flip-flop-gate"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libxdsim = { git = "https://github.com/25cst/libxdsim" }
+xdsim-dummies-type = { git = "https://github.com/25cst/xdsim-dummies-type" }
+
+[lib]
+crate-type = ["dylib"]
