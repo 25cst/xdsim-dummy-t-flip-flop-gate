@@ -1,0 +1,40 @@
+name: Release Build
+
+on:
+  release:
+    types: [created]
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_extension: "so"
+          - os: macos-latest
+            artifact_extension: "dylib"
+          - os: windows-latest
+            artifact_extension: "dll"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: cargo build --release --verbose
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # This wildcards says: "Upload any file in this folder 
+          # that ends with the extension defined in the matrix"
+          files: target/release/*.${{ matrix.artifact_extension }}
