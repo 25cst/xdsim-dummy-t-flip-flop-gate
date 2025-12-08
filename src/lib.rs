@@ -1,14 +1,12 @@
-use std::mem::transmute;
-
 use libxdsim::{app_state::*, component::*, graphics::*};
-use xdsim_dummies_type::Bit;
+use xdsim_dummy_bit_type::Bit;
 
 #[repr(C)]
 pub struct NoProperties;
 
 impl PropertiesContainer for NoProperties {
     fn get_menu(&self) -> Menu {
-        Menu { items: vec![] }
+        Menu { items: Box::new([]) }
     }
 
     fn get_option(&self) -> Option<MenuInputValue> {
@@ -23,8 +21,8 @@ impl PropertiesContainer for NoProperties {
         Err(PropertiesContainerSetError::PropertyDoesNotExist)
     }
 
-    fn serialize(&self) -> Vec<u8> {
-        vec![]
+    fn serialize(&self) -> Box<[u8]> {
+        Box::new([])
     }
 }
 
@@ -38,37 +36,36 @@ impl Gate for TFlipFlop {
     fn definition(&self) -> GateDefinition {
         GateDefinition {
             version: 0,
-            inputs: vec![GateIOEntry {
-                name: "T".to_string(),
-                data_type: "dummies-0.1::bit",
+            inputs: Box::new([GateIOEntry {
+                name: "T".into(),
+                data_type: ("dummy-bit", 0, 1),
                 position: Vec2 { x: 0.0, y: 0.5 },
-            }],
-            outputs: vec![
+            }]),
+            outputs: Box::new([
                 GateIOEntry {
-                    name: "Q".to_string(),
-                    data_type: "dummies-0.1::bit",
+                    name: "Q".into(),
+                    data_type: ("dummy-bit", 0, 1),
                     position: Vec2 { x: 1.0, y: 0.7 },
                 },
                 GateIOEntry {
-                    name: "QBar".to_string(),
-                    data_type: "dummies-0.1::bit",
+                    name: "QBar".into(),
+                    data_type: ("dummy-bit", 0, 1),
                     position: Vec2 { x: 1.0, y: 0.3 },
                 },
-            ],
+            ]),
             bounding_box: Vec2 { x: 1.0, y: 1.0 },
-            identifier: "dummy-t-flip-flop-0.1",
+            identifier: ("dummy-t-flip-flop", 0, 1),
         }
     }
 
-    fn tick(&mut self, input: GateTickRequest) -> Vec<*const ()> {
-        let bit = &unsafe { *(input.inputs[0] as *const Bit) };
+    fn tick(&mut self, input: GateTickRequest) -> Box<[Box<dyn Type>]> {
+        let bit = input.get_input::<Bit>(0);
 
         if bit.0 {
             self.value.0 = !self.value.0;
         }
 
-        // return (self.value,);
-        unsafe { vec![transmute(Box::into_raw(Box::new(self.value)))] }
+        Box::new([Box::new(self.value)])
     }
 
     fn draw(&self, _request: &GateDrawRequest) -> libxdsim::graphics::Graphic {
@@ -106,7 +103,7 @@ impl Gate for TFlipFlop {
         &mut self.properties
     }
 
-    fn serialize(&self) -> Vec<u8> {
+    fn serialize(&self) -> Box<[u8]> {
         self.value.serialize()
     }
 }
@@ -118,13 +115,9 @@ pub fn create_gate() -> Box<dyn Gate> {
     })
 }
 
-pub fn deserialize_gate(gate: Vec<u8>, properties: Vec<u8>) -> Box<dyn Gate> {
+pub fn deserialize_gate(gate: Box<[u8]>, _props: Box<[u8]>) -> Box<dyn Gate> {
     Box::new(TFlipFlop {
-        value: Bit::deserialize(gate),
-        properties: deserialize_gate_property(properties),
+        value: xdsim_dummy_bit_type::deserialize(gate),
+        properties: NoProperties,
     })
-}
-
-pub fn deserialize_gate_property(_properties: Vec<u8>) -> NoProperties {
-    NoProperties
 }
