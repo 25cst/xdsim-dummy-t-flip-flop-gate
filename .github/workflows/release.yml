@@ -31,10 +31,26 @@ jobs:
       - name: Build
         run: cargo build --release --verbose
 
+      # NEW STEP: Renames the file using the release tag (e.g., mylib-v1.0.0.so)
+      - name: Rename Asset with Tag
+        shell: bash
+        run: |
+          cd target/release
+          # Find the file matching the extension (takes the first one found)
+          ORIGINAL_FILE=$(ls *.${{ matrix.artifact_extension }} | head -n 1)
+          
+          # Strip the extension from the filename
+          BASENAME="${ORIGINAL_FILE%.*}"
+          
+          # Create the new name: basename + tag + extension
+          NEW_NAME="${BASENAME}-${{ github.ref_name }}.${{ matrix.artifact_extension }}"
+          
+          echo "Renaming $ORIGINAL_FILE to $NEW_NAME"
+          mv "$ORIGINAL_FILE" "$NEW_NAME"
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          # This wildcards says: "Upload any file in this folder 
-          # that ends with the extension defined in the matrix"
-          files: target/release/*.${{ matrix.artifact_extension }}
+          # Update pattern to look for the file with the tag in the name
+          files: target/release/*-${{ github.ref_name }}.${{ matrix.artifact_extension }}
