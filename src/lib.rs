@@ -1,12 +1,19 @@
-use libxdsim::{app_state::*, component::*, graphics::*};
-use xdsim_dummy_bit_type::Bit;
+use libxdsim::{
+    component_ident_v0,
+    defs::{GateDefinition, PackageDefinition},
+    package_ident_v0,
+    v0::{ComponentType, PackageDefinitionV0, app_state::*, component::*, graphics::*},
+};
+use xdsim_dummy_bit_data::Bit;
 
 #[repr(C)]
 pub struct NoProperties;
 
 impl PropertiesContainer for NoProperties {
     fn get_menu(&self) -> Menu {
-        Menu { items: Box::new([]) }
+        Menu {
+            items: Box::new([]),
+        }
     }
 
     fn get_option(&self) -> Option<MenuInputValue> {
@@ -33,9 +40,8 @@ pub struct TFlipFlop {
 }
 
 impl Gate for TFlipFlop {
-    fn definition(&self) -> GateDefinition {
-        GateDefinition {
-            version: 0,
+    fn definition(&self) -> Box<dyn GateDefinition> {
+        Box::new(GateDefinitionV0 {
             inputs: Box::new([GateIOEntry {
                 name: "T".into(),
                 data_type: ("dummy-bit", 0, 1),
@@ -54,11 +60,11 @@ impl Gate for TFlipFlop {
                 },
             ]),
             bounding_box: Vec2 { x: 1.0, y: 1.0 },
-            identifier: ("dummy-t-flip-flop", 0, 1),
-        }
+            identifier: component_ident_v0!("dummy-t-flip-flop"),
+        })
     }
 
-    fn tick(&mut self, input: GateTickRequest) -> Box<[Box<dyn Type>]> {
+    fn tick(&mut self, input: GateTickRequest) -> Box<[Box<dyn Data>]> {
         let bit = input.get_input::<Bit>(0);
 
         if bit.0 {
@@ -68,7 +74,7 @@ impl Gate for TFlipFlop {
         Box::new([Box::new(self.value)])
     }
 
-    fn draw(&self, _request: &GateDrawRequest) -> libxdsim::graphics::Graphic {
+    fn draw(&self, _request: &GateDrawRequest) -> Graphic {
         Graphic::from_vec(vec![
             Element::Rect {
                 pos: Vec2 { x: 0.0, y: 0.0 },
@@ -108,6 +114,7 @@ impl Gate for TFlipFlop {
     }
 }
 
+#[unsafe(no_mangle)]
 pub fn create_gate() -> Box<dyn Gate> {
     Box::new(TFlipFlop {
         value: Bit(false),
@@ -115,9 +122,22 @@ pub fn create_gate() -> Box<dyn Gate> {
     })
 }
 
+#[unsafe(no_mangle)]
 pub fn deserialize_gate(gate: Box<[u8]>, _props: Box<[u8]>) -> Box<dyn Gate> {
     Box::new(TFlipFlop {
-        value: xdsim_dummy_bit_type::deserialize(gate),
+        value: Bit::deserialize(gate),
         properties: NoProperties,
+    })
+}
+
+#[unsafe(no_mangle)]
+pub fn package_definition() -> Box<dyn PackageDefinition> {
+    Box::new(PackageDefinitionV0 {
+        ident: package_ident_v0!("dummy-t-flip-flop"),
+        component_type: ComponentType::Gate,
+
+        authors: &["siriusmart"],
+        description: "An example T flip flop gate.",
+        homepage: "https://github.com/25cst/xdsim-dummy-t-flip-flop-gate",
     })
 }

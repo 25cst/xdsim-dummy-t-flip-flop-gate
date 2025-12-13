@@ -1,11 +1,13 @@
 [package]
 name = "xdsim-dummy-t-flip-flop-gate"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 
 [dependencies]
 libxdsim = { git = "https://github.com/25cst/libxdsim" }
-xdsim-dummy-bit-type = { git = "https://github.com/25cst/xdsim-dummy-bit-type" }
+# libxdsim = { path = "../libxdsim/" }
+xdsim-dummy-bit-data = { git = "https://github.com/25cst/xdsim-dummy-bit-data" }
+# xdsim-dummy-bit-type = { path = "../xdsim-dummy-bit-type/" }
 
 [lib]
 crate-type = ["dylib"]

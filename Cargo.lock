@@ -5,20 +5,20 @@ version = 4
 [[package]]
 name = "libxdsim"
 version = "0.1.0"
-source = "git+https://github.com/25cst/libxdsim#9eebb34b28b67b8e02ef290ee2ea07c3f77c0a16"
+source = "git+https://github.com/25cst/libxdsim#cd153a242afa82cd2a3f6ee0869a755efca10ad8"
 
 [[package]]
-name = "xdsim-dummy-bit-type"
-version = "0.1.0"
-source = "git+https://github.com/25cst/xdsim-dummy-bit-type#47b0d25abc0119a19e640d83cb65783883349d36"
+name = "xdsim-dummy-bit-data"
+version = "0.1.2"
+source = "git+https://github.com/25cst/xdsim-dummy-bit-data#4decc17be6778b12e810530e0f3fdeafd6bd73ad"
 dependencies = [
  "libxdsim",
 ]
 
 [[package]]
 name = "xdsim-dummy-t-flip-flop-gate"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "libxdsim",
- "xdsim-dummy-bit-type",
+ "xdsim-dummy-bit-data",
 ]
