@@ -10,7 +10,7 @@ source = "git+https://github.com/25cst/libxdsim#cd153a242afa82cd2a3f6ee0869a755e
 [[package]]
 name = "xdsim-dummy-bit-data"
 version = "0.1.2"
-source = "git+https://github.com/25cst/xdsim-dummy-bit-data#4decc17be6778b12e810530e0f3fdeafd6bd73ad"
+source = "git+https://github.com/25cst/xdsim-dummy-bit-data#6d953416f92084f213512451454b859d0c27a5f3"
 dependencies = [
  "libxdsim",
 ]

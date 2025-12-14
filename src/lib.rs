@@ -114,7 +114,7 @@ impl Gate for TFlipFlop {
     }
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(feature = "export-abi", unsafe(no_mangle))]
 pub fn create_gate() -> Box<dyn Gate> {
     Box::new(TFlipFlop {
         value: Bit(false),
@@ -122,7 +122,7 @@ pub fn create_gate() -> Box<dyn Gate> {
     })
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(feature = "export-abi", unsafe(no_mangle))]
 pub fn deserialize_gate(gate: Box<[u8]>, _props: Box<[u8]>) -> Box<dyn Gate> {
     Box::new(TFlipFlop {
         value: Bit::deserialize(gate),
@@ -130,7 +130,7 @@ pub fn deserialize_gate(gate: Box<[u8]>, _props: Box<[u8]>) -> Box<dyn Gate> {
     })
 }
 
-#[unsafe(no_mangle)]
+#[cfg_attr(feature = "export-abi", unsafe(no_mangle))]
 pub fn package_definition() -> Box<dyn PackageDefinition> {
     Box::new(PackageDefinitionV0 {
         ident: package_ident_v0!("dummy-t-flip-flop"),

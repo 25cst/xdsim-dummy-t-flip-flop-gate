@@ -7,7 +7,10 @@ edition = "2024"
 libxdsim = { git = "https://github.com/25cst/libxdsim" }
 # libxdsim = { path = "../libxdsim/" }
 xdsim-dummy-bit-data = { git = "https://github.com/25cst/xdsim-dummy-bit-data" }
-# xdsim-dummy-bit-type = { path = "../xdsim-dummy-bit-type/" }
+# xdsim-dummy-bit-data = { path = "../xdsim-dummy-bit-data/" }
 
 [lib]
-crate-type = ["dylib"]
+crate-type = ["cdylib"]
+
+[features]
+export-abi = []
